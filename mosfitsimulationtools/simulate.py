@@ -320,7 +320,7 @@ class Set(object):
         f.write("#!/usr/bin/env bash\n")
         f.write("chmod +x run_script_*\n")
         for i in range(0, len(run_blocks)):
-            f.write("screen -S " + str(i) + " -d -m ./run_script_" + str(i) + "\n")
+            f.write("screen -S " + self.name + "." + str(i) + " -d -m ./run_script_" + str(i) + "\n")
         
         f.close()
         

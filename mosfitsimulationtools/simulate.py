@@ -186,7 +186,8 @@ class Set(object):
                  N_obs_per_band = 20,
                  mag_err = 0.002,
                  num_walkers = 100,
-                 num_iterations = 500):
+                 num_iterations = 500,
+                 num_sims_per_screen = 3):
         
         self.name = name
         self.model = model
@@ -202,6 +203,7 @@ class Set(object):
         self.mag_err = mag_err
         self.num_walkers = num_walkers
         self.num_iterations = num_iterations
+        self.simsperscsreen = num_sims_per_screen
         
     
     def generate(self):
@@ -297,13 +299,13 @@ class Set(object):
         return full_command
     
         
-    def create_bash_scripts(self, num_per_screen = 5):
+    def create_bash_scripts(self):
         '''
         A helper that creats the script that will create the screen sessions 
         and run MOSFiT in generative mode
         '''
         run_commands = self.get_all_run_commands()
-        k = num_per_screen
+        k = self.simsperscsreen
         run_blocks = [run_commands[i:i+k] for i in range(0, len(run_commands), k)]
         # Write the inner scripts
         for i in range(0, len(run_blocks)):

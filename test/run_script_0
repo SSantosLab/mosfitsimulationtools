@@ -1,0 +1,3 @@
+#!/usr/bin/env bash
+cd /home/kl/thesis/newmosfitanalysistools/test/theta0/run && mosfit -m kasen_model -e /home/kl/thesis/newmosfitanalysistools/test/theta0/theta0.json --band-instruments DECam --band-list u Y --max-time 3 -F Msph1 0.04 vk1 0.1 xlan1 0.01 phi 0.7 Msph0 0.025 vk0 0.3 xlan0 0.0001 --no-copy-at-launch -N 10 -i 500 --local-data-only && cd
+cd /home/kl/thesis/newmosfitanalysistools/test/theta90/run && mosfit -m kasen_model -e /home/kl/thesis/newmosfitanalysistools/test/theta90/theta90.json --band-instruments DECam --band-list u Y --max-time 3 -F Msph1 0.04 vk1 0.1 xlan1 0.01 phi 0.7 Msph0 0.025 vk0 0.3 xlan0 0.0001 --no-copy-at-launch -N 10 -i 500 --local-data-only && cd

@@ -11,6 +11,6 @@
 For actual usage, I suggest first deleting \test\ and the two example scripts and using as follows:
 ```python
 import mosfitsimulationtools as mst
-set = mst.simualte.Single(...options...)
+data = mst.simualte.Single(...options...)
 ```
 

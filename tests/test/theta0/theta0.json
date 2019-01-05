@@ -1,0 +1,239 @@
+{
+    "theta0": {
+        "sources": [
+            {
+                "alias": "1", 
+                "name": "MOSFiT generated data"
+            }
+        ], 
+        "photometry": [
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.0", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "22.081479487400806", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.3", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "20.835761031592597", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.6", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "21.976191678035324", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.8999999999999999", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "22.721568470746902", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "1.2", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "23.405213921074495", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "1.5", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "23.86799040114889", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "1.7999999999999998", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "24.203422990986212", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "2.1", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "24.483274935676462", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "2.4", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "24.572483196985342", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "2.6999999999999997", 
+                "system": "AB", 
+                "band": "u", 
+                "magnitude": "24.85302067083584", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.0", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "23.474299808942547", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.3", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "20.127642615855628", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.6", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "19.371800872967224", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "0.8999999999999999", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "18.966217036117197", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "1.2", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "18.74143267012215", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "1.5", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "18.62662564265154", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "1.7999999999999998", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "18.658487615462604", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "2.1", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "18.696547476875107", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "2.4", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "18.837595998860017", 
+                "u_time": "MJD", 
+                "source": "1"
+            }, 
+            {
+                "e_magnitude": 0.002, 
+                "telescope": "CTIO", 
+                "instrument": "DECam", 
+                "time": "2.6999999999999997", 
+                "system": "AB", 
+                "band": "Y", 
+                "magnitude": "18.95613561222234", 
+                "u_time": "MJD", 
+                "source": "1"
+            }
+        ], 
+        "name": "theta0", 
+        "alias": [
+            {
+                "source": "1", 
+                "value": "MOSFiT generated data"
+            }
+        ]
+    }
+}

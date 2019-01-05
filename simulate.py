@@ -255,6 +255,7 @@ class Set(object):
         
         return 0
     
+    
     def get_all_run_commands(self):
         '''
         Returns the MOSFiT input commands of the simulation set
@@ -294,7 +295,6 @@ class Set(object):
 
         return full_command
     
-
         
     def create_bash_scripts(self, num_per_screen = 5):
         '''
@@ -322,24 +322,6 @@ class Set(object):
         f.close()
         
     def get_run_paths(self):
-        
-        # What I need to do is to transfer the true values of the parameters
-        # from simulate.py to analyze.py so I need to write a doc that's like
-        # true_val run_loc
-        # 1 path/to/thing
-        
-        # and then read that in in analyze.py
-
         return self.run_locs
         
         
-        
-    
-    
-    
-    
-    
-    
-    
-    
-    

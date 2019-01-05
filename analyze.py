@@ -17,8 +17,6 @@
 import json
 import numpy as np
 
-
-# -----------------------------------------------------------------------------
 class Single(object):
     '''
     Represents the data output by MOSFiT after parameter determination
@@ -120,12 +118,4 @@ class Set(object):
 
     def get_simulations(self):
         return self.simulations
-            
-            
-            
-            
-            
-            
-            
-            
             

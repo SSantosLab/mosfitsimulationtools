@@ -187,7 +187,9 @@ class Set(object):
                  mag_err = 0.002,
                  num_walkers = 100,
                  num_iterations = 500,
-                 num_sims_per_screen = 3):
+                 num_sims_per_screen = 3,
+                 dump_extras = False,
+                 extras = ['lum_0', 'lum_1', 'times']): # extras to dump
         
         self.name = name
         self.model = model
@@ -204,7 +206,8 @@ class Set(object):
         self.num_walkers = num_walkers
         self.num_iterations = num_iterations
         self.simsperscsreen = num_sims_per_screen
-        
+        self.dump_extras = dump_extras
+        self.extras = extras
     
     def generate(self):
         '''
@@ -293,6 +296,12 @@ class Set(object):
             " -F " + param_str + " " + 
              '--no-copy-at-launch -N ' + str(num_walkers) + ' -i ' +
              str(self.num_iterations) + ' --local-data-only')
+
+
+        if self.dump_extras:
+            extra_str = " -x " + " ".join(self.extras)
+            mosfit_command = mosfit_command + extra_str
+
 
         full_command = 'cd ' + run_loc + ' && ' + mosfit_command + ' && cd'
 

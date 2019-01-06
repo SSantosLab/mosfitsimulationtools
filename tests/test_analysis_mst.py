@@ -20,15 +20,16 @@ run_locs_file = "./test/run_paths"
 # -----------------------------------------------------------------------------
 
 results = mst.analyze.Set('theta', run_locs_file)
-quantiles = results.get_quantiles()
-print(quantiles)
+true, q50s, qms, qps = results.get_plotting_vals()
+print('True: {0} , Mean: {1}, Plus (q84): {2}, Minus (q16): {3}'.format(true, q50s, qms, qps))
 
 # Should yield something close to what is below
 # But MCMC isn't determinative, so you know, it'll be something different
 '''
-([0.13016566496298526, 1.0758381633834104], 
-[0.4805015081827334, 1.2351341039914703], 
-[1.2722618301848712, 1.4341241286371136])
+True: [0.   1.57] , 
+Mean: [0.31598286 1.19908933], 
+Plus (q84): [0.15059294 0.41182856], 
+Minus (q16): [0.35850292 0.28549421]
 '''
 ## TEST PLOTTING
 # -----------------------------------------------------------------------------

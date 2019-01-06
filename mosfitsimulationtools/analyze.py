@@ -58,12 +58,6 @@ class Single(object):
     def get_num_realizations(self):
         return len(self.param_vals)
     
-    def get_quantitles(self):
-        q16 = np.quantile(self.param_vals, 0.16)
-        q50 = np.quantile(self.param_vals, 0.50)
-        q84 = np.quantile(self.param_vals, 0.84)
-    
-        return q16, q50, q84
     
     def get_data(self):
         '''
@@ -77,6 +71,24 @@ class Single(object):
         '''
         return self.models
     
+    def get_plotting_vals(self):
+        '''
+        Gets the four values needed for plotting:
+            - true value
+            - q50
+            - q_m = q_50-q_16 (minus)
+            - q_p = q_84-q_50 (plus)
+            
+        '''
+        true_val = self.true_val
+        
+        q16 = np.quantile(self.param_vals, 0.16)
+        q50 = np.quantile(self.param_vals, 0.50)
+        q84 = np.quantile(self.param_vals, 0.84)
+        
+        q_m, q_p = q50-q16, q84-q50
+        
+        return np.array([true_val, q50, q_m, q_p])
     
     
 class Set(object):
@@ -103,18 +115,19 @@ class Set(object):
             
             self.simulations.append(simulation)
             
-    def get_quantiles(self):
-        q16s = []
+    def get_plotting_vals(self):
+        true = []
         q50s = []
-        q84s = []
-        
+        qms = []
+        qps = []
         for i in self.simulations:
-            q16, q50, q84 = i.get_quantitles()
-            q16s.append(q16)
+            true_val, q50, q_m, q_p = i.get_plotting_vals()
+            true.append(true_val)
             q50s.append(q50)
-            q84s.append(q84)
+            qms.append(q_m)
+            qps.append(q_p)
 
-        return q16s, q50s, q84s
+        return np.array([true, q50s, qms, qps])
 
     def get_simulations(self):
         return self.simulations

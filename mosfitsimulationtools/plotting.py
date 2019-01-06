@@ -28,15 +28,18 @@ class Plotting(object):
         analyze_single: a Single object from analyze.py 
         '''
         if theta:
-           sim_results = analyze_single.get_param_vals()
+           sim_results = np.array(analyze_single.get_param_vals())*180/np.pi
+           
            cfig = corner.corner(sim_results, quantiles=[.16, .50, .84], 
-                         show_titles=True, labels=[r'$\theta$'])
+                         show_titles=True, labels=[r'$\theta_{meas}$'])
            cfig.axes[0].axvline(analyze_single.get_true_val(), color='red')
+           cfig.suptitle(r'$\theta_{true}$ = ' +str(analyze_single.get_true_val()*180./np.pi), fontsize=18)
+           plt.tight_layout(pad=1.7)
+           return cfig
         else:
-            pass
+            return 0 
+        
        
-        return cfig
-
     def single_comparison(self,analyze_single, name='comparison.png', save=False):
         '''
         Make a comparison plot of the input data and the walkers on a 
@@ -93,10 +96,16 @@ class Plotting(object):
                     
             plt.errorbar(time, mag, fmt='o' ,yerr=error, 
                          label=str(instruments[0]) + ' ' + str(band), 
-                         color=self.bandcolor(band))
+                         markerfacecolor=self.bandcolor(band), markeredgecolor='k', ecolor='k')
             
-            
-            
+        true, q_50, q_m, q_p = analyze_single.get_plotting_vals()*180/np.pi
+
+
+        fmt = "{0:.2f}".format
+        title = r"${{{0}}}_{{-{1}}}^{{+{2}}}$"
+        title = title.format(fmt(q_50), fmt(q_m), fmt(q_p))
+        plt.title(r'$\theta_{true}$ = ' +  	"{:.2f}".format(true) + r', $\theta_{meas}$ = ' + title)
+        
         plt.legend()
         if save:
             plt.savefig(name, dpi=300)
@@ -112,24 +121,10 @@ class Plotting(object):
         theta=True: by default, I make the theta-centered plot because my thesis
         is all about that sweet sweet angle
         '''
-        true_vals = []
-        for sim in analyze_set.get_simulations():
-            true_vals.append(sim.get_true_val())
-            
-            
-        q16s, q50s, q84s = analyze_set.get_quantiles()
-        q50a = np.array(q50s) 
-        q16a = np.abs(np.array(q16s) - q50a)
-        q84a = np.array(q84s) -q50a
         
-        # convert everything to degrees
-        true = np.array(true_vals)*180/np.pi
-        q50d = q50a*180/np.pi
-        q16d = q16a*180/np.pi
-        q84d = q84a*180/np.pi
         
-        plt.errorbar(true, q50d, yerr=[q16d, q84d], fmt='ko')
-        
+        true, q50s, qms, qps = analyze_set.get_plotting_vals()*180/np.pi
+        plt.errorbar(true, q50s, yerr=[qms, qps], fmt='ko')
         if truevtrue:
             plt.plot(true, true, '-', color='r')
         

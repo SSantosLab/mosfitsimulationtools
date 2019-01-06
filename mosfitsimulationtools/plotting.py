@@ -28,12 +28,17 @@ class Plotting(object):
         analyze_single: a Single object from analyze.py 
         '''
         if theta:
+           plt.rcParams["font.family"] = "serif"
+           plt.rcParams.update({'font.size': 12})
+           cfig = plt.figure(figsize=(8,10))
+            
+            
            sim_results = np.array(analyze_single.get_param_vals())*180/np.pi
            
            cfig = corner.corner(sim_results, quantiles=[.16, .50, .84], 
                          show_titles=True, labels=[r'$\theta_{meas}$'])
            cfig.axes[0].axvline(analyze_single.get_true_val(), color='red')
-           cfig.suptitle(r'$\theta_{true}$ = ' +str(analyze_single.get_true_val()*180./np.pi), fontsize=18)
+           cfig.suptitle(r'$\theta_{true}$ = ' +"{:.0f}".format(analyze_single.get_true_val()*180./np.pi), fontsize=16)
            plt.tight_layout(pad=1.7)
            return cfig
         else:
@@ -104,7 +109,7 @@ class Plotting(object):
         fmt = "{0:.2f}".format
         title = r"${{{0}}}_{{-{1}}}^{{+{2}}}$"
         title = title.format(fmt(q_50), fmt(q_m), fmt(q_p))
-        plt.title(r'$\theta_{true}$ = ' +  	"{:.2f}".format(true) + r', $\theta_{meas}$ = ' + title)
+        plt.title(r'$\theta_{true}$ = ' +  	"{:.0f}".format(true) + r', $\theta_{meas}$ = ' + title)
         
         plt.legend()
         if save:

@@ -37,14 +37,12 @@ class Plotting(object):
        
         return cfig
 
-    def single_comparison(self,analyze_single, input_data_path, name='comparison.png', save=False):
+    def single_comparison(self,analyze_single, name='comparison.png', save=False):
         '''
         Make a comparison plot of the input data and the walkers on a 
         magnitude vs. MJD plot
         
         analyze_single: a Single object from analyze.py
-        input_data_path: path to the input data file that was used to run the
-        simulation
         '''
      
         sns.reset_orig()
@@ -71,7 +69,6 @@ class Plotting(object):
         fake_data = analyze_single.get_determined_data()
         num_realizations = analyze_single.get_num_realizations()
         
-
         
         for band in bands: 
             # Plotting Simulated Sata

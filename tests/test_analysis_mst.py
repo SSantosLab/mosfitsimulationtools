@@ -33,8 +33,7 @@ print(quantiles)
 ## TEST PLOTTING
 # -----------------------------------------------------------------------------
 plotting = mst.plotting.Plotting()
-all_data_set = mst.analyze.Set('theta', './test/run_paths')
-plotting.money_plot(all_data_set, truevtrue=True, save=False)
+plotting.money_plot(results, truevtrue=True, save=False)
 
 single_data = mst.analyze.Single(freeparamname='theta', 
                              trueval=0, 

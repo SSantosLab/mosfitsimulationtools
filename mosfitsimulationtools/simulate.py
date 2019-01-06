@@ -32,7 +32,8 @@ class Single(object):
                  S = 100, # Smoothness parameter, check MOSFiT docs
                  param_vals = [('Msph1', 0.04), ('vk1', 0.1), ('xlan1', 1e-2 ),
                                ('theta', 0.0), ('phi', 0.7), ('Msph0', 0.025),
-                               ('vk0', 0.3), ('xlan0',1e-4)] ):
+                               ('vk0', 0.3), ('xlan0',1e-4)],
+                 generate_extras = False, extras = ['times']):
         ''' 
         Specify the terms of the simulation, built in defaults are for the
         kasen_model
@@ -46,7 +47,8 @@ class Single(object):
         self.S = S
         self.param_vals = param_vals
         self.telescope = telescope
-        
+        self.generate_extras = generate_extras
+        self.extras = extras
 
     def generate(self):
         '''
@@ -89,6 +91,11 @@ class Single(object):
                    ' --max-time ' + str(self.max_time) +" -F " + param_str + 
                    ' ' + " " + str(self.S) + " " + 
                    '--no-copy-at-launch -N 1 ' ) 
+        
+        if self.generate_extras:
+            extra_str = " -x " + " ".join(self.extras)
+            command = command + extra_str
+
         
         return command
     
@@ -188,7 +195,7 @@ class Set(object):
                  num_walkers = 100,
                  num_iterations = 500,
                  num_sims_per_screen = 3,
-                 dump_extras = False,
+                 dump_extras_on_gen = False,
                  extras = ['lum_0', 'lum_1', 'times']): # extras to dump
         
         self.name = name
@@ -206,7 +213,7 @@ class Set(object):
         self.num_walkers = num_walkers
         self.num_iterations = num_iterations
         self.simsperscsreen = num_sims_per_screen
-        self.dump_extras = dump_extras
+        self.dump_extras = dump_extras_on_gen
         self.extras = extras
     
     def generate(self):
@@ -296,11 +303,6 @@ class Set(object):
             " -F " + param_str + " " + 
              '--no-copy-at-launch -N ' + str(num_walkers) + ' -i ' +
              str(self.num_iterations) + ' --local-data-only')
-
-
-        if self.dump_extras:
-            extra_str = " -x " + " ".join(self.extras)
-            mosfit_command = mosfit_command + extra_str
 
 
         full_command = 'cd ' + run_loc + ' && ' + mosfit_command + ' && cd'

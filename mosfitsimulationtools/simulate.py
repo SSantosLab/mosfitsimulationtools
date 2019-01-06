@@ -248,7 +248,8 @@ class Set(object):
                     instrument = self.instrument,
                     telescope = self.telescope,
                     bands = self.bands,
-                    S = self.S )
+                    S = self.S,
+                    generate_extras = self.dump_extras, extras = self.extras)
                 mock.generate()
                 input_file_loc, run_dir = mock.generate_input_file(N=self.N, error=self.mag_err)
 

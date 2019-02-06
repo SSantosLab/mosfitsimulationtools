@@ -68,7 +68,8 @@ class Single(object):
             print("Making directory " + self.name + " failed.")
             
         os.chdir(self.path)
-        call = subprocess.call(command, shell =True)
+        print("Calling the command: " + str(command))
+	call = subprocess.call(command, shell =True)
         os.chdir(old_path)
         
         return call
@@ -89,7 +90,7 @@ class Single(object):
         command = ('mosfit -m ' + self.model + ' --band-instruments ' + 
                    self.instrument + " --band-list " + " ".join(self.bands) +
                    ' --max-time ' + str(self.max_time) +" -F " + param_str + 
-                   ' ' + " " + str(self.S) + " " + 
+                    ' -S ' + str(self.S) + " " + 
                    '--no-copy-at-launch -N 1 ' ) 
         
         if self.generate_extras:

@@ -32,7 +32,7 @@ class Single(object):
                  S = 100, # Smoothness parameter, check MOSFiT docs
                  param_vals = [('Msph1', 0.04), ('vk1', 0.1), ('xlan1', 1e-2 ),
                                ('theta', 0.0), ('phi', 0.7), ('Msph0', 0.025),
-                               ('vk0', 0.3), ('xlan0',1e-4)],
+                               ('vk0', 0.3), ('xlan0',1e-4), ('sedoffset', 0.0)],
                  generate_extras = False, extras = ['times']):
         ''' 
         Specify the terms of the simulation, built in defaults are for the

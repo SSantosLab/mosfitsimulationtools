@@ -12,6 +12,7 @@
 
 import corner
 import matplotlib.pyplot as plt
+plt.switch_backend('agg')
 import numpy as np
 import seaborn as sns
 
@@ -40,6 +41,9 @@ class Plotting(object):
            cfig.axes[0].axvline(analyze_single.get_true_val(), color='red')
            cfig.suptitle(r'$\theta_{true}$ = ' +"{:.0f}".format(analyze_single.get_true_val()*180./np.pi), fontsize=16)
            plt.tight_layout(pad=1.7)
+	   if save:
+	       plt.savefig(name, dpi=300)
+
            return cfig
         else:
             return 0 
@@ -59,7 +63,7 @@ class Plotting(object):
 
         fig = plt.figure(figsize=(12,8))
         plt.gca().invert_yaxis()
-        #plt.gca().set_xlim(55700,55820)
+        plt.gca().set_xlim(0,4)
         #plt.gca().set_ylim(bottom=25, top=19)
         plt.gca().set_xlabel('MJD')
         plt.gca().set_ylabel('Apparent Magnitude')

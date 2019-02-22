@@ -25,14 +25,17 @@ class Single(object):
     """
 
     def __init__(self, name, model='kasen_model',
-                 max_time = 3, 
+                 num_nights = 3, 
+                 night_length = 0.33, # fraction of day
+                 N_obs = 4,
+                 band_offset = 0.01, # frac of day between band obs (this is ~17min)
                  instrument = 'DECam', 
                  telescope = 'CTIO',
                  bands = ['u', 'g', 'r', 'i', 'z', 'Y'],
                  S = 100, # Smoothness parameter, check MOSFiT docs
                  param_vals = [('Msph1', 0.04), ('vk1', 0.1), ('xlan1', 1e-2 ),
                                ('theta', 0.0), ('phi', 0.7), ('Msph0', 0.025),
-                               ('vk0', 0.3), ('xlan0',1e-4), ('sedoffset', 0.0)],
+                               ('vk0', 0.3), ('xlan0',1e-4)],
                  generate_extras = False, extras = ['times']):
         ''' 
         Specify the terms of the simulation, built in defaults are for the
@@ -41,7 +44,10 @@ class Single(object):
     
         self.name = name
         self.model = model
-        self.max_time = max_time
+        self.num_nights = num_nights
+        self.night_length = night_length
+        self.N_obs = N_obs
+        self.band_offset = band_offset
         self.instrument = instrument
         self.bands = bands
         self.S = S
@@ -69,11 +75,43 @@ class Single(object):
             
         os.chdir(self.path)
         print("Calling the command: " + str(command))
-	call = subprocess.call(command, shell =True)
+        call = subprocess.call(command, shell =True)
         os.chdir(old_path)
         
         return call
-               
+    
+    def generate_times(self):
+        '''
+        A helper for create_mosfit_gen_command() that creates the necessary times
+        to generate the observations. 
+        '''
+        day_length = 1. - self.night_length
+        current_offset = 0
+        times = np.empty((0,self.num_nights*(self.N_obs+1)))
+
+
+        for band in self.bands:
+            band_times = np.array([[]])
+            start = day_length
+            for night in range(0, self.num_nights):
+		single_times = np.concatenate((np.array([0.]),
+				np.linspace([start + current_offset],
+                                [start + self.night_length + current_offset],
+                                num = self.N_obs ))) 
+                band_times = np.append(band_times, single_times)
+
+                start += 1
+            band_times = band_times.reshape(1, len(band_times))
+	    times = np.append(times, band_times, axis=0)
+            current_offset += self.band_offset
+
+        self.times = times
+        self.times_strings = times.astype('|S5')
+        
+        # we're gonna need this one later too
+        # we're going to need the flat version on return
+        return self.times_strings.flatten()
+
         
     def create_mosfit_gen_command(self):
         '''
@@ -87,9 +125,12 @@ class Single(object):
             
         param_str = " ".join(param_list)
         
+        times_flat = self.generate_times()
+        times_str = " ".join(times_flat)
+        
         command = ('mosfit -m ' + self.model + ' --band-instruments ' + 
                    self.instrument + " --band-list " + " ".join(self.bands) +
-                   ' --max-time ' + str(self.max_time) +" -F " + param_str + 
+                   ' --extra-times ' + times_str + " -F " + param_str + 
                     ' -S ' + str(self.S) + " " + 
                    '--no-copy-at-launch -N 1 ' ) 
         
@@ -101,11 +142,10 @@ class Single(object):
         return command
     
     
-    def generate_input_file(self, N = 20, error = 0.02):
+    def generate_input_file(self, error = 0.02):
         '''
         Generates an input file for the evaluative run of MOSFiT
         '''
-        self.sampleN = N
         self.sampleerr = error
         
         with open('./' + self.name +'/products/walkers.json', 'r') as f:
@@ -130,25 +170,20 @@ class Single(object):
         
         # Keep only the right bands
         photo_reduced = []
-        for band in bands_unicode:
+        for band, times_allowed in zip(bands_unicode, self.times_strings):
             p = [i for i in photo if i[u'band'] == band]
-            photo_reduced.append(p)
-            
-        photo_reduced_2 = []
+            allowed_p = []
+            for entry in p:
+                if entry[u'time'] in times_allowed:
+                    allowed_p.append(entry)
+		if float(entry[u'time']) == 0.0:
+		    entry[u'magnitude'] = "24.0" # set the 0 point to be basically the point it always is on the Kasen SEDs (cheating but whatver)
+            photo_reduced.append(allowed_p)
 
-        for p in photo_reduced:
-            # get evenly spaced N indices, approx. from 0 to len(p)
-            # new_p contains that slice from p
-            l = len(p)
-            ind = [int(i*l/N) for i in range(0,N)]
-            new_p = [p[i] for i in ind]
-            photo_reduced_2.append(new_p)
-
-
-        photo_reduced_3 = [obs for band_sublist in photo_reduced_2 for obs in band_sublist]
+        photo_reduced_2 = [obs for band_sublist in photo_reduced for obs in band_sublist]
     
         self.mock_sample = {self.name: {'name': self.name,"sources":[{"name":"MOSFiT generated data", "alias":"1"}],
-                    "alias":[{"value":"MOSFiT generated data","source":"1"}], 'photometry': photo_reduced_3}}
+                    "alias":[{"value":"MOSFiT generated data","source":"1"}], 'photometry': photo_reduced_2}}
 
         self.dump_path = self.path + '/' + self.name + '.json'
 
@@ -182,7 +217,10 @@ class Set(object):
     
     def __init__(self, name='new_set',
                  model='kasen_model',
-                 max_time = 3, 
+                 num_nights = 3, 
+                 night_length = 0.33, # fraction of day
+                 band_offset = 0.01, # frac of day between band obs (this is ~17min)
+                 N_obs = 4, # number of observations per day
                  instrument = 'DECam', 
                  telescope = 'CTIO',
                  bands = ['u', 'g', 'r', 'i', 'z', 'Y'],
@@ -191,7 +229,6 @@ class Set(object):
                                 ('phi', 0.7), ('Msph0', 0.025),
                                ('vk0', 0.3), ('xlan0',1e-4)],
                  free_params = [('theta', np.linspace(0,1.57,10))],
-                 N_obs_per_band = 20,
                  mag_err = 0.002,
                  num_walkers = 100,
                  num_iterations = 500,
@@ -201,7 +238,10 @@ class Set(object):
         
         self.name = name
         self.model = model
-        self.max_time = max_time
+        self.band_offset = band_offset
+        self.num_nights = num_nights
+        self.night_length = night_length
+        self.N_obs = N_obs
         self.instrument = instrument
         self.bands = bands
         self.S = S
@@ -209,7 +249,6 @@ class Set(object):
 
         self.fixed_params = fixed_params
         self.free_params = free_params
-        self.N = N_obs_per_band
         self.mag_err = mag_err
         self.num_walkers = num_walkers
         self.num_iterations = num_iterations
@@ -242,17 +281,22 @@ class Set(object):
                     sim_name = free_param_name + '{:.0f}'.format(val*180/np.pi)
                 else:
                     sim_name = free_param_name + str(val)
-                print('Now generating... ' + sim_name)
-                mock = Single(sim_name, param_vals = self.fixed_params + [(free_param_name, val)], 
+                print('Now generating... ' + sim_name)                
+                mock = Single(sim_name, 
+                              num_nights = self.num_nights,
+                              night_length = self.night_length,
+                              band_offset = self.band_offset,
+                              N_obs = self.N_obs,
+                              param_vals = self.fixed_params + 
+                              [(free_param_name, val)], 
                     model = self.model,
-                    max_time = self.max_time, 
                     instrument = self.instrument,
                     telescope = self.telescope,
                     bands = self.bands,
                     S = self.S,
                     generate_extras = self.dump_extras, extras = self.extras)
                 mock.generate()
-                input_file_loc, run_dir = mock.generate_input_file(N=self.N, error=self.mag_err)
+                input_file_loc, run_dir = mock.generate_input_file(error=self.mag_err)
 
                 self.run_commands.append(self.generate_mosfit_run_command(walker_path=input_file_loc,
                     run_loc = run_dir, num_walkers=self.num_walkers))
@@ -301,7 +345,7 @@ class Set(object):
 
         mosfit_command = ('mosfit -m ' + self.model + ' -e ' + walker_path + 
             ' --band-instruments ' +  self.instrument + " --band-list " + 
-            " ".join(self.bands) + ' --max-time ' + str(self.max_time) + 
+            " ".join(self.bands) + ' --max-time ' + str(self.num_nights + 1) + 
             " -F " + param_str + " " + 
              '--no-copy-at-launch -N ' + str(num_walkers) + ' -i ' +
              str(self.num_iterations) + ' --local-data-only')

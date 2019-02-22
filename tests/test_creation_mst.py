@@ -18,18 +18,19 @@ import mosfitsimulationtools as mst
 
 # -----------------------------------------------------------------------------
 simulation_data = mst.simulate.Set('test', model='kasen_model',
-                 max_time = 3, 
-                 instrument = 'DECam', 
-                 telescope = 'CTIO',
-                 bands = ['u',  'Y'],
-                 S = 100,
-                 fixed_params = [('Msph1', 0.04), ('vk1', 0.1),('xlan1', 1e-2),
-                                ('phi', 0.7), ('Msph0', 0.025),
-                               ('vk0', 0.3), ('xlan0',1e-4)],
-                 free_params = [('theta', [0, 1.57])],
-                 N_obs_per_band = 10,
-                 mag_err = 0.002,
-                 num_walkers = 10) # use default params
+                  num_nights = 3,
+                  night_length = 0.33, # fraction of day
+                  N_obs = 4,
+                  instrument = 'DECam',
+                  telescope = 'CTIO',
+                  bands = ['g',  'z'],
+                  S = 100,
+                  fixed_params = [('Msph1', 0.04), ('vk1', 0.1),('xlan1', 1e-2),
+                                 ('phi', 0.7), ('Msph0', 0.025),
+                                 ('vk0', 0.3), ('xlan0',1e-4), ('texplosion', 0.0)],
+                  free_params = [('theta', [0, 1.57])],
+                  mag_err = 0.002,
+                  num_walkers = 10) # use default params
 simulation_data.generate()
 # -----------------------------------------------------------------------------
 

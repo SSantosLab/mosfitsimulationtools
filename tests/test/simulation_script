@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 chmod +x run_script_*
-screen -S 0 -d -m ./run_script_0
+screen -S test.0 -d -m ./run_script_0

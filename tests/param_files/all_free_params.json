@@ -1,0 +1,51 @@
+{
+    "nhhost":{
+        "value":7e20
+    },
+    "texplosion":{
+        "value": 0.0
+    },
+    "theta":{
+        "min_value":0.0,
+        "max_value":1.57,
+        "log":false
+    },
+    "phi":{
+        "min_value":0.0,
+        "max_value":1.57,
+        "log":false
+    },
+    "vk1":{
+        "min_value":0.03,
+        "max_value":0.30,
+        "log":false
+    },
+    "Msph1":{
+        "min_value":0.001,
+        "max_value":0.1,
+        "log":false
+    },
+    "xlan1":{
+        "min_value":1e-9,
+        "max_value":1e-1,
+        "log":false
+    },
+    "vk0":{
+        "min_value":0.03,
+        "max_value":0.30,
+        "log":false
+   
+    },
+    "Msph0":{
+        "min_value":0.001,
+        "max_value":0.1,
+        "log":false
+
+    },
+    "xlan0":{
+        "min_value":1e-9,
+        "max_value":1e-1,
+        "log":false    
+    }
+}
+

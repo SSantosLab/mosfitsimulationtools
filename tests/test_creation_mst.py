@@ -16,22 +16,27 @@ import mosfitsimulationtools as mst
 ## To test MOSFiT Analysis Tools, run this script, followed by 
 ## test_analysis_mst.py. 
 
-# -----------------------------------------------------------------------------
-simulation_data = mst.simulate.Set('test', model='kasen_model',
-                  num_nights = 3,
-                  night_length = 0.33, # fraction of day
-                  N_obs = 4,
-                  instrument = 'DECam',
-                  telescope = 'CTIO',
-                  bands = ['g',  'z'],
-                  S = 100,
-                  fixed_params = [('Msph1', 0.04), ('vk1', 0.1),('xlan1', 1e-2),
-                                 ('phi', 0.7), ('Msph0', 0.025),
-                                 ('vk0', 0.3), ('xlan0',1e-4), ('texplosion', 0.0)],
-                  free_params = [('theta', [0, 1.57])],
-                  mag_err = 0.002,
-                  num_walkers = 10) # use default params
-simulation_data.generate()
+# ------------------------------------------------------------------------------
+simulation  = mst.simulate.Set('test')
+simulation.generate_input_data(  model='kasen_model',
+    num_nights = 3,
+    night_length = 0.33, 
+    band_offset = 0.01,
+    N_obs = 4,
+    instrument = 'DECam',
+    telescope = 'CTIO',
+    bands = ['g',  'z'],
+    S = 100,
+    fixed_params = [('Msph1', 0.04), ('vk1', 0.1),('xlan1', 1e-2),
+                   ('phi', 0.7), ('Msph0', 0.025),
+                   ('vk0', 0.3), ('xlan0',1e-4), ('texplosion', 0.0)],
+    free_params = [('theta', [0, 1.57])],
+    mag_err = 0.02)
+
+simulation.generate_simulation( param_file='/home/s1/kamile/mosfitsimulationtools/tests/param_files/theta_only_free.json',
+        num_walkers = 10,
+        num_iterations =500,
+        num_sims_per_screen=3)
 # -----------------------------------------------------------------------------
 
 '''

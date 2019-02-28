@@ -1,7 +1,6 @@
- 
-# MOSFiT Simulation Tools
+ # MOSFiT Simulation Tools
 # simulate.py
-# January 2019
+# Febrary 2019
 # Kamile Lukosiute Thesis Code
 # python2
 
@@ -94,15 +93,15 @@ class Single(object):
             band_times = np.array([[]])
             start = day_length
             for night in range(0, self.num_nights):
-		single_times = np.concatenate((np.array([0.]),
-				np.linspace([start + current_offset],
+        	single_times = np.concatenate((np.array([0.]),
+                np.linspace([start + current_offset],
                                 [start + self.night_length + current_offset],
                                 num = self.N_obs ))) 
                 band_times = np.append(band_times, single_times)
 
                 start += 1
             band_times = band_times.reshape(1, len(band_times))
-	    times = np.append(times, band_times, axis=0)
+            times = np.append(times, band_times, axis=0)
             current_offset += self.band_offset
 
         self.times = times
@@ -110,7 +109,7 @@ class Single(object):
         
         # we're gonna need this one later too
         # we're going to need the flat version on return
-        return self.times_strings.flatten()
+	return self.times_strings.flatten()
 
         
     def create_mosfit_gen_command(self):
@@ -154,8 +153,8 @@ class Single(object):
                 data = data[list(data.keys())[0]]
         
         photo = data['photometry']
-
-        # Remove dict entries we don't need
+        
+	# Remove dict entries we don't need
         for i in photo:
             del i[u'model']
             del i[u'realization']
@@ -167,19 +166,18 @@ class Single(object):
         
         # Bands but unicode
         bands_unicode = [unicode(s) for s in self.bands]
-        
+         
         # Keep only the right bands
         photo_reduced = []
         for band, times_allowed in zip(bands_unicode, self.times_strings):
             p = [i for i in photo if i[u'band'] == band]
             allowed_p = []
             for entry in p:
-                if entry[u'time'] in times_allowed:
+                if str(entry[u'time']) in times_allowed:
                     allowed_p.append(entry)
-		if float(entry[u'time']) == 0.0:
-		    entry[u'magnitude'] = "24.0" # set the 0 point to be basically the point it always is on the Kasen SEDs (cheating but whatver)
+            if float(entry[u'time']) == 0.0:
+                entry[u'magnitude'] = "24.0" # set the 0 point to be basically the point it always is on the Kasen SEDs (cheating but whatver)
             photo_reduced.append(allowed_p)
-
         photo_reduced_2 = [obs for band_sublist in photo_reduced for obs in band_sublist]
     
         self.mock_sample = {self.name: {'name': self.name,"sources":[{"name":"MOSFiT generated data", "alias":"1"}],
@@ -209,34 +207,38 @@ class Single(object):
         '''
         return self.mock_sample
     
+
 class Set(object):
     """
     Represents a set of Single objects with modifications that free certain
     parameters in order to run MOSFiT in determinative mode 
     """
-    
-    def __init__(self, name='new_set',
-                 model='kasen_model',
-                 num_nights = 3, 
-                 night_length = 0.33, # fraction of day
-                 band_offset = 0.01, # frac of day between band obs (this is ~17min)
-                 N_obs = 4, # number of observations per day
-                 instrument = 'DECam', 
-                 telescope = 'CTIO',
-                 bands = ['u', 'g', 'r', 'i', 'z', 'Y'],
-                 S = 100,
-                 fixed_params = [('Msph1', 0.04), ('vk1', 0.1), ('xlan1', 1e-2 ),
-                                ('phi', 0.7), ('Msph0', 0.025),
-                               ('vk0', 0.3), ('xlan0',1e-4)],
-                 free_params = [('theta', np.linspace(0,1.57,10))],
-                 mag_err = 0.002,
-                 num_walkers = 100,
-                 num_iterations = 500,
-                 num_sims_per_screen = 3,
-                 dump_extras_on_gen = False,
-                 extras = ['lum_0', 'lum_1', 'times']): # extras to dump
-        
+
+    def __init__(self, name='new_set'):
         self.name = name
+
+    def generate_input_data(self, model='kasen_model',
+        num_nights = 3, 
+        night_length = 0.33, # fraction of day
+        band_offset = 0.01, # frac of day between band obs (this is ~17min)
+        N_obs = 4, # number of observations per day
+        instrument = 'DECam', 
+        telescope = 'CTIO',
+        bands = ['u', 'g', 'r', 'i', 'z', 'Y'],
+        S = 100,
+        mag_err = 0.02,
+        fixed_params = [('Msph1', 0.04), ('vk1', 0.1), ('xlan1', 1e-2 ),
+                       ('phi', 0.7), ('Msph0', 0.025),
+                       ('vk0', 0.3), ('xlan0',1e-4)],
+        free_params = [('theta', np.linspace(0,1.57,10))],
+        dump_extras_on_gen = False,
+        extras = ['lum_0', 'lum_1', 'times']):
+        '''
+        Creates a set of Single objects, whcih are the mock observations,
+        with parameters specified by initialization. 
+
+        These parameters ONLY deermine the mock data attributes.
+        '''    
         self.model = model
         self.band_offset = band_offset
         self.num_nights = num_nights
@@ -246,27 +248,20 @@ class Set(object):
         self.bands = bands
         self.S = S
         self.telescope = telescope
-
         self.fixed_params = fixed_params
         self.free_params = free_params
         self.mag_err = mag_err
-        self.num_walkers = num_walkers
-        self.num_iterations = num_iterations
-        self.simsperscsreen = num_sims_per_screen
+
         self.dump_extras = dump_extras_on_gen
         self.extras = extras
-    
-    def generate(self):
-        '''
-        Creates a set of Single objects, which are mock observations, with 
-        varying parameters specified by initialization
-        '''
-        
-        self.run_commands = []
-        self.run_locs = {}
 
-        old_path = os.getcwd()
-        self.path = old_path + '/' + self.name
+        self.run_locs = {} # location of run dir for each simulation
+        self.mocks = [] # the set of Single() objects
+        self.input_files = [] # the location of the input files 
+        self.run_dirs = [] # the directories that simulations will be run in
+
+        self.old_path = os.getcwd()
+        self.path = self.old_path + '/' + self.name
         try:
             os.mkdir(self.path)
         except OSError:
@@ -295,11 +290,13 @@ class Set(object):
                     bands = self.bands,
                     S = self.S,
                     generate_extras = self.dump_extras, extras = self.extras)
-                mock.generate()
+                mock.generate()                
+                self.mocks.append(mock)
+                
                 input_file_loc, run_dir = mock.generate_input_file(error=self.mag_err)
-
-                self.run_commands.append(self.generate_mosfit_run_command(walker_path=input_file_loc,
-                    run_loc = run_dir, num_walkers=self.num_walkers))
+                self.input_files.append(input_file_loc)
+                self.run_dirs.append(run_dir)
+                
                 self.run_locs[val] = run_dir
 
         # create the run locs file
@@ -308,54 +305,75 @@ class Set(object):
             f.write(str(i) + ' ' + self.run_locs[i] + '\n')
         f.close()
 
+        os.chdir(self.old_path)
 
-        self.create_bash_scripts()
-        os.chdir(old_path)
-        
         return 0
     
-    
-    def get_all_run_commands(self):
+    def generate_simulation(self, 
+        param_file='/home/s1/kamile/analyses/all_free_params.json',
+        num_walkers = 80,
+        num_iterations =5000,
+        num_sims_per_screen=3):
         '''
-        Returns the MOSFiT input commands of the simulation set
+        Creates the files necessary for actually running the simulation.
+
+        The combination of the params file (which needs to be edited by hand),
+        number of walkers, and number of iterations, should specify all the 
+        parameters of the simulations.
+
+        generate_input_data needs to be run BEFORE this can be run
         '''
-        return self.run_commands
-    
-    def generate_mosfit_run_command(self, walker_path=None,
+        self.simsperscsreen = num_sims_per_screen
+        self.run_commands = []
+
+        os.chdir(self.path) # go back into the direcotry 
+
+        for mock, input_file, run_loc in zip(self.mocks, self.input_files, self.run_dirs):
+            command = self.generate_mosfit_run_command(mock=mock,
+            run_loc = run_loc,
+            data_file = input_file,
+            param_file = param_file,
+            num_iterations = num_iterations,
+            num_walkers = num_walkers)
+
+            self.run_commands.append(command)
+
+        self.create_bash_scripts()
+        os.chdir(self.old_path)
+
+        return 0
+
+    def generate_mosfit_run_command(self, mock=None,
         run_loc = None,
-        num_walkers = 0):
-        '''
-        A helper function that creates the MOSFiT generative command for a 
-        single simulation
-        '''
-        
-        param_list = []
-        for i in self.fixed_params:
-            param_list.append(str(i[0]))
-            param_list.append(str(i[1]))
-            
-        param_str = " ".join(param_list)
+        data_file = None,
+        param_file = None,
+        num_iterations = 5000,
+        num_walkers = 10):
 
-        if walker_path == None:
-            walker_path = self.dump_path
+        if data_file == None:
+            data_file = mock.dump_path
 
-        if num_walkers == 0:
-            num_walkers = 2 * len(self.free_params)
+        if run_loc == None:
+            raise ValueError('Simulation Location Not Specified')
+
+        if param_file == None:
+            raise ValueError('Parameter File Not Specified')
+
+        if mock == None:
+            raise ValueError('Single() Object Not Provided')
 
 
-        mosfit_command = ('mosfit -m ' + self.model + ' -e ' + walker_path + 
+        mosfit_command = ('mosfit -m ' + self.model + ' -e ' + data_file +
+            ' -P '+  param_file +
             ' --band-instruments ' +  self.instrument + " --band-list " + 
             " ".join(self.bands) + ' --max-time ' + str(self.num_nights + 1) + 
-            " -F " + param_str + " " + 
-             '--no-copy-at-launch -N ' + str(num_walkers) + ' -i ' +
-             str(self.num_iterations) + ' --local-data-only')
-
+            ' --no-copy-at-launch -N ' + str(num_walkers) + ' -i ' +
+            str(num_iterations) + ' --local-data-only')
 
         full_command = 'cd ' + run_loc + ' && ' + mosfit_command + ' && cd'
 
-        return full_command
-    
-        
+        return full_command 
+
     def create_bash_scripts(self):
         '''
         A helper that creats the script that will create the screen sessions 
@@ -380,6 +398,12 @@ class Set(object):
             f.write("screen -S " + self.name + "." + str(i) + " -d -m ./run_script_" + str(i) + "\n")
         
         f.close()
+
+    def get_all_run_commands(self):
+        '''
+        Returns the MOSFiT input commands of the simulation set
+        '''
+        return self.run_commands
         
     def get_run_paths(self):
         return self.run_locs

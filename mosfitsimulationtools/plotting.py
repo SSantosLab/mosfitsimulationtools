@@ -159,3 +159,119 @@ class Plotting(object):
                   u'z': (1.0, 0.5874509803921569, 0.4125490196078432, 1.0),
                   u'Y':(1.0, 0.8776470588235293, 0.12235294117647078, 1.0)}
         return colors[band]
+    
+    
+    def single_raw(self, data_path='data.json', name='input.png', save =False):
+        '''
+        Plots the data from a single, already existing data set
+        '''
+
+        # Import data
+        with open(data_path, 'r') as f:
+            data = json.loads(f.read())
+            if 'name' not in data:
+                data = data[list(data.keys())[0]]
+
+        sns.reset_orig()
+        plt.rcParams["font.family"] = "serif"
+        plt.rcParams.update({'font.size': 14})
+
+        fig = plt.figure(figsize=(12,8))
+        plt.gca().invert_yaxis()
+        #plt.gca().set_xlim(55700,55820)
+        #plt.gca().set_ylim(bottom=25, top=19)
+        plt.gca().set_xlabel('MJD')
+        plt.gca().set_ylabel('Apparent Magnitude')
+
+        real_data = data['photometry']
+        instruments = [] # should only ever be one instrument 
+        bands = []
+
+        for i in real_data:
+            if i[u'band'] not in bands:
+                bands.append(i[u'band'])
+            if i[u'instrument'] not in instruments:
+                instruments.append(i[u'instrument'])
+
+        for band in bands: 
+            # Plotting real data
+            mag = []
+            time = []
+            error = []
+            for point in real_data:
+                if point[u'band'] == band:
+                    mag.append(float(point[u'magnitude']))
+                    time.append(float(point[u'time']))
+                    error.append(float(point[u'e_magnitude']))
+
+            plt.errorbar(time, mag, fmt='o' ,yerr=error, 
+                         label=str(instruments[0]) + ' ' + str(band), 
+                         markerfacecolor=self.bandcolor(band), markeredgecolor='k', ecolor='k')
+
+        plt.legend()
+        if save:
+            plt.savefig(name, dpi=300)
+            
+            
+    def single_raw_comparison(self, data_paths=['data.json'], labels=[" "], name='input.png', save =False, band=u'g'):
+        '''
+        Plots the data from a single, already existing data set
+        '''
+        sns.reset_orig()
+        plt.rcParams["font.family"] = "serif"
+        plt.rcParams.update({'font.size': 14})
+
+        fig = plt.figure(figsize=(12,8))
+        plt.gca().invert_yaxis()
+        #plt.gca().set_xlim(55700,55820)
+        #plt.gca().set_ylim(bottom=25, top=19)
+        plt.gca().set_xlabel('MJD')
+        plt.gca().set_ylabel('Apparent Magnitude')
+
+        colors = [(0.0, 0.0, 0.5647058823529412, 1.0), 
+                  (0.11335784313725483, 0.0, 1.0, 1.0), 
+                  (0.5545343137254901, 0.014901960784313717, 0.9850980392156864, 1.0), 
+                  (1.0, 0.30509803921568623, 0.6949019607843139, 1.0),
+                  (1.0, 0.5874509803921569, 0.4125490196078432, 1.0),
+                  (1.0, 0.8776470588235293, 0.12235294117647078, 1.0)]
+        
+        for data_path, label, color in zip(data_paths, labels, colors):
+
+            # Import data
+            with open(data_path, 'r') as f:
+                data = json.loads(f.read())
+                if 'name' not in data:
+                    data = data[list(data.keys())[0]]
+
+
+            real_data = data['photometry']
+            instruments = [] # should only ever be one instrument 
+            bands = []
+
+            for i in real_data:
+                if i[u'band'] not in bands:
+                    bands.append(i[u'band'])
+                if i[u'instrument'] not in instruments:
+                    instruments.append(i[u'instrument'])
+
+            for band_to_use in bands: 
+                if band_to_use == band:
+                    # Plotting real data
+                    mag = []
+                    time = []
+                    error = []
+                    for point in real_data:
+                        if point[u'band'] == band:
+                            mag.append(float(point[u'magnitude']))
+                            time.append(float(point[u'time']))
+                            error.append(float(point[u'e_magnitude']))
+
+                    plt.errorbar(time, mag, fmt='-o' ,yerr=error, 
+                                 label=str(instruments[0]) + ' ' + str(band) + ' ' + label,
+                                 color=color)
+
+        plt.legend()
+        if save:
+            plt.savefig(name, dpi=300)
+
+

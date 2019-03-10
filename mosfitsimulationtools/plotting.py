@@ -12,6 +12,7 @@
 
 import corner
 import matplotlib.pyplot as plt
+import json 
 plt.switch_backend('agg')
 import numpy as np
 import seaborn as sns
@@ -161,7 +162,16 @@ class Plotting(object):
         return colors[band]
     
     
-    def single_raw(self, data_path='data.json', name='input.png', save =False):
+    def single_raw(self, 
+                   data_path='data.json', 
+                   name='input.png', 
+                   save =False, 
+                   title=' ',
+                   connect = False,
+                   xlim_min = 0,
+                   xlim_max = 3.5,
+                  ylim_t = 17,
+                  ylim_b = 25):
         '''
         Plots the data from a single, already existing data set
         '''
@@ -178,8 +188,8 @@ class Plotting(object):
 
         fig = plt.figure(figsize=(12,8))
         plt.gca().invert_yaxis()
-        #plt.gca().set_xlim(55700,55820)
-        #plt.gca().set_ylim(bottom=25, top=19)
+        plt.gca().set_xlim(xlim_min, xlim_max)
+        plt.gca().set_ylim(bottom=ylim_b, top=ylim_t)
         plt.gca().set_xlabel('MJD')
         plt.gca().set_ylabel('Apparent Magnitude')
 
@@ -204,11 +214,12 @@ class Plotting(object):
                     time.append(float(point[u'time']))
                     error.append(float(point[u'e_magnitude']))
 
-            plt.errorbar(time, mag, fmt='o' ,yerr=error, 
+            plt.errorbar(time, mag, fmt='o-' ,yerr=error, 
                          label=str(instruments[0]) + ' ' + str(band), 
-                         markerfacecolor=self.bandcolor(band), markeredgecolor='k', ecolor='k')
+                         markerfacecolor=self.bandcolor(band), markeredgecolor='k', ecolor='k', color=self.bandcolor(band))
 
         plt.legend()
+        plt.title(title)
         if save:
             plt.savefig(name, dpi=300)
             
@@ -228,13 +239,32 @@ class Plotting(object):
         plt.gca().set_xlabel('MJD')
         plt.gca().set_ylabel('Apparent Magnitude')
 
-        colors = [(0.0, 0.0, 0.5647058823529412, 1.0), 
+        colors = ['xkcd:darkblue',
+                  'xkcd:blue',
+                  'xkcd:aqua',
+                  'xkcd:lightblue',
+                  'xkcd:lime',
+                  'xkcd:green',
+                  'xkcd:darkgreen',
+                  'xkcd:goldenrod',
+                  'xkcd:orange',
+                  'xkcd:maroon',
+                  'xkcd:salmon',
+                  'xkcd:red',
+                  'xkcd:magenta',
+                  'xkcd:plum',
+                  'xkcd:lavender',
+                  'xkcd:purple'
+               
+                   ]
+        '''
+        (0.0, 0.0, 0.5647058823529412, 1.0), 
                   (0.11335784313725483, 0.0, 1.0, 1.0), 
                   (0.5545343137254901, 0.014901960784313717, 0.9850980392156864, 1.0), 
                   (1.0, 0.30509803921568623, 0.6949019607843139, 1.0),
                   (1.0, 0.5874509803921569, 0.4125490196078432, 1.0),
-                  (1.0, 0.8776470588235293, 0.12235294117647078, 1.0)]
-        
+                  (1.0, 0.8776470588235293, 0.12235294117647078, 1.0)
+        '''
         for data_path, label, color in zip(data_paths, labels, colors):
 
             # Import data
@@ -270,7 +300,7 @@ class Plotting(object):
                                  label=str(instruments[0]) + ' ' + str(band) + ' ' + label,
                                  color=color)
 
-        plt.legend()
+        plt.legend(bbox_to_anchor=(1.05, 1))
         if save:
             plt.savefig(name, dpi=300)
 
